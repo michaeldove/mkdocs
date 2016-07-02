@@ -122,4 +122,10 @@ DEFAULT_SCHEMA = (
     # MkDocs itself. A good example here would be including the current
     # project version.
     ('extra', config_options.SubConfig()),
+
+    # Page context builders.
+    # This allows developers to extend page information for presentation in
+    # templates.
+    ('page_contexts', config_options.PageContextExtensions()),
+
 )

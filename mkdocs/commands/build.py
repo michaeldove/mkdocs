@@ -107,12 +107,16 @@ def get_global_context(nav, config):
         'config': config
     }
 
+def apply_context(context, page):
+    for key in context:
+        setattr(page, key, context[key])
 
 def get_page_context(page, content, toc, meta, config):
     """
     Generate the page context by extending the global context and adding page
     specific variables.
     """
+       
     if config['site_url']:
         page.set_canonical_url(config['site_url'])
 
@@ -134,6 +138,10 @@ def get_page_context(page, content, toc, meta, config):
         page_description = config['site_description']
     else:
         page_description = None
+
+    for context_extension in config['page_contexts']:
+        context = context_extension.context(page, config)
+        apply_context(context, page)
 
     return {
         'page': page,
@@ -300,7 +308,6 @@ def build_pages(config, dump_json=False):
     build_extra_templates(config['extra_templates'], config, site_navigation)
 
     for page in site_navigation.walk_pages():
-
         try:
             log.debug("Building page %s", page.input_path)
             build_result = _build_page(page, config, site_navigation, env,
