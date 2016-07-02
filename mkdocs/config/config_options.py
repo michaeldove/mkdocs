@@ -1,5 +1,6 @@
 from __future__ import unicode_literals
 import os
+import importlib
 
 from mkdocs import utils, legacy
 from mkdocs.config.base import Config, ValidationError
@@ -509,3 +510,23 @@ class MarkdownExtensions(OptionallyRequired):
 
     def post_validation(self, config, key_name):
         config[self.configkey] = self.configdata
+
+
+class PageContextExtensions(OptionallyRequired):
+
+    def __init__(self, **kwargs):
+        super(PageContextExtensions, self).__init__(**kwargs)
+        self.context_extensions = []
+
+    def run_validation(self, value):
+        if not isinstance(value, (list, tuple)):
+            raise ValidationError('Invalid Page Context Extensions configuration')
+        for name in value:
+            module = importlib.import_module(name, package='mkdocs.extensions')
+            self.context_extensions.append(module)
+
+    def post_validation(self, config, key_name):
+        config[key_name] = self.context_extensions
+
+
+
