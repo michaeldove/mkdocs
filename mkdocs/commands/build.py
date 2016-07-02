@@ -141,7 +141,6 @@ def get_page_context(page, content, toc, meta, config):
 
     for context_extension in config['page_contexts']:
         context = context_extension.context(page, config)
-        print context
         apply_context(context, page)
 
     return {
